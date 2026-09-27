@@ -9,8 +9,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/arazzki/ScanAja/releases/latest/download/app-release.apk">
-    <img src="https://img.shields.io/badge/Download%20APK-v2.0.0%20(Direct)-2563EB?style=for-the-badge&logo=android&logoColor=white" alt="Download APK Badge"/>
+  <a href="https://github.com/arazzki/ScanAja/releases/latest/download/ScanAja.apk">
+    <img src="https://img.shields.io/badge/Download%20APK-ScanAja.apk-2563EB?style=for-the-badge&logo=android&logoColor=white" alt="Download APK Badge"/>
   </a>
   <a href="https://github.com/arazzki/ScanAja/releases">
     <img src="https://img.shields.io/badge/GitHub-Releases-10B981?style=for-the-badge&logo=github&logoColor=white" alt="Releases Badge"/>
@@ -30,8 +30,8 @@
 ## 📥 Unduh APK Langsung (Siap Pakai)
 
 Anda tidak perlu meng-compile atau meng-install Flutter untuk mencoba aplikasi ini di perangkat Android Anda:
-- 📲 **[Download ScanAja v2.0.0 (app-release.apk)](https://github.com/arazzki/ScanAja/releases/latest/download/app-release.apk)** *(Ukuran: ~87MB)*
-- 📑 Lihat riwayat versi lengkap di halaman **[GitHub Releases](https://github.com/arazzki/ScanAja/releases)**.
+- 📲 **[Download ScanAja (ScanAja.apk)](https://github.com/arazzki/ScanAja/releases/latest/download/ScanAja.apk)** *(Ukuran: ~87MB)*
+- 📑 Lihat riwayat rilis lengkap di halaman **[GitHub Releases](https://github.com/arazzki/ScanAja/releases)**.
 
 ---
 
@@ -157,7 +157,7 @@ flutter build apk --release
 ```
 File APK rilis akan dihasilkan di:
 ```plaintext
-build/app/outputs/flutter-apk/app-release.apk
+build/app/outputs/flutter-apk/ScanAja.apk
 ```
 
 ---
