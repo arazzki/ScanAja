@@ -9,12 +9,29 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Flutter-v3.24+-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter Badge"/>
-  <img src="https://img.shields.io/badge/Dart-v3.5+-0175C2?style=for-the-badge&logo=dart&logoColor=white" alt="Dart Badge"/>
-  <img src="https://img.shields.io/badge/Kotlin-Android-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white" alt="Kotlin Badge"/>
-  <img src="https://img.shields.io/badge/Google%20ML%20Kit-Document%20Scanner-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="ML Kit Badge"/>
-  <img src="https://img.shields.io/badge/UI/UX-Material%203-2563EB?style=for-the-badge" alt="Material 3 Badge"/>
+  <a href="https://github.com/arazzki/ScanAja/releases/latest/download/app-release.apk">
+    <img src="https://img.shields.io/badge/Download%20APK-v2.0.0%20(Direct)-2563EB?style=for-the-badge&logo=android&logoColor=white" alt="Download APK Badge"/>
+  </a>
+  <a href="https://github.com/arazzki/ScanAja/releases">
+    <img src="https://img.shields.io/badge/GitHub-Releases-10B981?style=for-the-badge&logo=github&logoColor=white" alt="Releases Badge"/>
+  </a>
 </p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Flutter-v3.24+-02569B?style=flat-square&logo=flutter&logoColor=white" alt="Flutter Badge"/>
+  <img src="https://img.shields.io/badge/Dart-v3.5+-0175C2?style=flat-square&logo=dart&logoColor=white" alt="Dart Badge"/>
+  <img src="https://img.shields.io/badge/Kotlin-Android-7F52FF?style=flat-square&logo=kotlin&logoColor=white" alt="Kotlin Badge"/>
+  <img src="https://img.shields.io/badge/Google%20ML%20Kit-Document%20Scanner-4285F4?style=flat-square&logo=google&logoColor=white" alt="ML Kit Badge"/>
+  <img src="https://img.shields.io/badge/UI/UX-Material%203-2563EB?style=flat-square" alt="Material 3 Badge"/>
+</p>
+
+---
+
+## 📥 Unduh APK Langsung (Siap Pakai)
+
+Anda tidak perlu meng-compile atau meng-install Flutter untuk mencoba aplikasi ini di perangkat Android Anda:
+- 📲 **[Download ScanAja v2.0.0 (app-release.apk)](https://github.com/arazzki/ScanAja/releases/latest/download/app-release.apk)** *(Ukuran: ~87MB)*
+- 📑 Lihat riwayat versi lengkap di halaman **[GitHub Releases](https://github.com/arazzki/ScanAja/releases)**.
 
 ---
 
@@ -36,7 +53,7 @@ Seluruh proses pemindaian dan pengenalan teks (OCR) berjalan **100% On-Device (O
 - **Multi-Page Scanning**: Pindai banyak halaman sekaligus dalam satu sesi dan gabungkan dalam satu dokumen.
 
 ### 2. ✍️ Tanda Tangan Digital (E-Sign)
-- **Canvas Tanda Tangan**: Kanvas responsif dengan berbagai pilihan warna tinta (Hitam, Biru, Merah).
+- **Canvas Tanda Tangan**: Kanvas responsif dengan berbagai pilihan warna tinta (Hitam, Biru Tua, Biru Terang, Merah).
 - **Stempel Dokumen Interaktif**: Tempatkan tanda tangan di atas lembaran dokumen, geser (*drag & drop*), dan atur ukurannya (*resizing slider*) sebelum disimpan permanen.
 
 ### 3. 🔄 Convert Hub (Konversi Berkas)
@@ -118,8 +135,8 @@ ScanAja/
 
 ### 1. Clone Repositori
 ```bash
-git clone https://github.com/username/Project_ScanAja.git
-cd Project_ScanAja
+git clone https://github.com/arazzki/ScanAja.git
+cd ScanAja
 ```
 
 ### 2. Pasang Dependensi
