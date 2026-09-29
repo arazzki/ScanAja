@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://github.com/arazzki/ScanAja/releases/latest/download/ScanAja.apk">
-    <img src="https://img.shields.io/badge/Download%20APK-ScanAja.apk-2563EB?style=for-the-badge&logo=android&logoColor=white" alt="Download APK Badge"/>
+    <img src="https://img.shields.io/badge/Download%20APK-v2.0.1-2563EB?style=for-the-badge&logo=android&logoColor=white" alt="Download APK Badge"/>
   </a>
   <a href="https://github.com/arazzki/ScanAja/releases">
     <img src="https://img.shields.io/badge/GitHub-Releases-10B981?style=for-the-badge&logo=github&logoColor=white" alt="Releases Badge"/>
