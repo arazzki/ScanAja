@@ -35,6 +35,22 @@ Anda tidak perlu meng-compile atau meng-install Flutter untuk mencoba aplikasi i
 
 ---
 
+## 📝 Riwayat Rilis (Changelog)
+
+### v2.0.1 (Patch Update)
+- **Dark Mode (Tema Gelap)**: Implementasi penuh Material 3 Dark Mode dengan *toggle* (Otomatis/Terang/Gelap).
+- **Reorder Pages**: Fitur baru untuk mengatur ulang urutan halaman dokumen dengan geser (*drag-and-drop*).
+- **Fix Tanda Tangan**: Menghilangkan garis biru (kotak seleksi) yang sebelumnya ikut tersimpan secara permanen pada gambar dokumen.
+- **Optimasi Performa**: Menggeser (*drag*) tanda tangan kini 100% mulus tanpa *lag* berkat optimasi rendering komponen isolasi.
+
+### v2.0.0 (Major Release)
+- **Rombak Ulang Engine**: Menggunakan **Google ML Kit Document Scanner** & Text Recognition (On-Device).
+- **Convert Hub**: Fitur baru untuk konversi banyak Gambar menjadi satu PDF, serta mengekstrak halaman PDF menjadi Gambar (JPG).
+- **Manajemen Folder**: Pengelompokan dokumen berdasarkan folder dinamis (buat, ubah nama, hapus) berbasis SQLite.
+- **Tanda Tangan Digital (E-Sign)**: Penambahan fitur stempel tanda tangan kustom di atas dokumen.
+
+---
+
 ## 📖 Tentang ScanAja
 
 **ScanAja** adalah aplikasi *all-in-one* produktivitas dokumen modern yang dirancang untuk kecepatan, keakuratan, dan kenyamanan pengguna. Mengombinasikan kekuatan antarmuka **Flutter** yang modern dan performa pemrosesan gambar tingkat rendah dari **Native Android (Kotlin)** via **Google ML Kit Document Scanner**, ScanAja menghadirkan pengalaman digitalisasi berkas tanpa ribet langsung dari perangkat Anda.
