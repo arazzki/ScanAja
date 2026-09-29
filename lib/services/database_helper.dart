@@ -294,6 +294,20 @@ CREATE TABLE folders (
     return result.map((json) => DocumentPageModel.fromMap(json)).toList();
   }
 
+  Future<void> reorderPages(int docId, List<DocumentPageModel> newOrder) async {
+    final db = await instance.database;
+    await db.transaction((txn) async {
+      for (int i = 0; i < newOrder.length; i++) {
+        await txn.update(
+          'document_pages',
+          {'pageIndex': i},
+          where: 'id = ? AND documentId = ?',
+          whereArgs: [newOrder[i].id, docId],
+        );
+      }
+    });
+  }
+
   Future close() async {
     final db = await instance.database;
     db.close();

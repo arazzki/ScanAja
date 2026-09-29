@@ -8,6 +8,7 @@ import '../models/folder_model.dart';
 import '../services/database_helper.dart';
 import '../services/pdf_service.dart';
 import 'sign_document_screen.dart';
+import 'reorder_pages_screen.dart';
 
 class DocumentDetailScreen extends StatefulWidget {
   final DocumentModel document;
@@ -38,6 +39,10 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
   }
 
   Future<void> _renameDoc() async {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     final controller = TextEditingController(text: _doc.title);
     final newTitle = await showDialog<String>(
       context: context,
@@ -50,19 +55,19 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
           decoration: InputDecoration(
             hintText: 'Nama baru dokumen',
             filled: true,
-            fillColor: const Color(0xFFF1F5F9),
+            fillColor: colorScheme.surfaceContainerHighest,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Batal', style: TextStyle(color: Color(0xFF64748B))),
+            child: Text('Batal', style: TextStyle(color: colorScheme.onSurfaceVariant)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF2563EB),
-              foregroundColor: Colors.white,
+              backgroundColor: colorScheme.primary,
+              foregroundColor: colorScheme.onPrimary,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
             onPressed: () {
@@ -86,6 +91,10 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
   }
 
   Future<void> _changeFolder() async {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     final folders = await DatabaseHelper.instance.readAllFolders();
     String currentFolder = _doc.folderName;
 
@@ -108,6 +117,7 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
                     onChanged: (val) {
                       setDialogState(() => currentFolder = val!);
                     },
+                    activeColor: colorScheme.primary,
                   ),
                   ...folders.map((f) => RadioListTile<String>(
                         title: Text(f.name),
@@ -116,6 +126,7 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
                         onChanged: (val) {
                           setDialogState(() => currentFolder = val!);
                         },
+                        activeColor: colorScheme.primary,
                       )),
                 ],
               ),
@@ -123,12 +134,12 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Batal', style: TextStyle(color: Color(0xFF64748B))),
+                child: Text('Batal', style: TextStyle(color: colorScheme.onSurfaceVariant)),
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2563EB),
-                  foregroundColor: Colors.white,
+                  backgroundColor: colorScheme.primary,
+                  foregroundColor: colorScheme.onPrimary,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
                 onPressed: () => Navigator.pop(context, currentFolder),
@@ -179,6 +190,23 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
     }
   }
 
+  Future<void> _openReorderPages() async {
+    if (_doc.pages == null || _doc.pages!.isEmpty) return;
+    final result = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ReorderPagesScreen(
+          document: _doc,
+          pages: _doc.pages!,
+        ),
+      ),
+    );
+    if (result == true) {
+      await _refreshDoc();
+      _showToast('Urutan halaman berhasil diperbarui');
+    }
+  }
+
   void _copyOcrText() {
     if (_doc.extractedText == null || _doc.extractedText!.trim().isEmpty) {
       _showToast('Tidak ada teks yang dapat disalin', isError: true);
@@ -189,10 +217,13 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
   }
 
   void _showToast(String msg, {bool isError = false}) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(msg),
-        backgroundColor: isError ? const Color(0xFFEF4444) : const Color(0xFF10B981),
+        backgroundColor: isError ? colorScheme.error : const Color(0xFF10B981),
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -200,15 +231,16 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+    
     final dateFormat = DateFormat('dd MMM yyyy, HH:mm');
 
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: const Color(0xFFF8FAFC),
         appBar: AppBar(
-          backgroundColor: Colors.white,
-          foregroundColor: const Color(0xFF0F172A),
           elevation: 0,
           title: Text(
             _doc.title,
@@ -219,24 +251,29 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
           actions: [
             IconButton(
               tooltip: 'Ubah Nama',
-              icon: const Icon(Icons.edit_outlined, color: Color(0xFF475569)),
+              icon: Icon(Icons.edit_outlined, color: colorScheme.onSurfaceVariant),
               onPressed: _renameDoc,
             ),
             IconButton(
               tooltip: 'Pindahkan Folder',
-              icon: const Icon(Icons.folder_outlined, color: Color(0xFF475569)),
+              icon: Icon(Icons.folder_outlined, color: colorScheme.onSurfaceVariant),
               onPressed: _changeFolder,
             ),
             IconButton(
+              tooltip: 'Atur Urutan Halaman',
+              icon: Icon(Icons.reorder_rounded, color: colorScheme.onSurfaceVariant),
+              onPressed: _openReorderPages,
+            ),
+            IconButton(
               tooltip: 'Bagikan PDF',
-              icon: const Icon(Icons.share_rounded, color: Color(0xFF2563EB)),
+              icon: Icon(Icons.share_rounded, color: colorScheme.primary),
               onPressed: _isLoading ? null : _shareAsPdf,
             ),
           ],
           bottom: TabBar(
-            labelColor: const Color(0xFF2563EB),
-            unselectedLabelColor: const Color(0xFF64748B),
-            indicatorColor: const Color(0xFF2563EB),
+            labelColor: colorScheme.primary,
+            unselectedLabelColor: colorScheme.onSurfaceVariant,
+            indicatorColor: colorScheme.primary,
             indicatorWeight: 3,
             tabs: [
               Tab(
@@ -252,17 +289,17 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
         ),
         body: TabBarView(
           children: [
-            _buildPagesView(dateFormat),
-            _buildOcrView(),
+            _buildPagesView(dateFormat, theme, colorScheme, isDark),
+            _buildOcrView(theme, colorScheme, isDark),
           ],
         ),
         bottomNavigationBar: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: colorScheme.surface,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Colors.black.withOpacity(isDark ? 0.2 : 0.04),
                 blurRadius: 8,
                 offset: const Offset(0, -2),
               ),
@@ -274,8 +311,8 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
                 Expanded(
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1E293B),
-                      foregroundColor: Colors.white,
+                      backgroundColor: colorScheme.onSurface,
+                      foregroundColor: colorScheme.surface,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       elevation: 0,
@@ -291,8 +328,8 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
                 const SizedBox(width: 12),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2563EB),
-                    foregroundColor: Colors.white,
+                    backgroundColor: colorScheme.primary,
+                    foregroundColor: colorScheme.onPrimary,
                     padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     elevation: 0,
@@ -308,7 +345,7 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
     );
   }
 
-  Widget _buildPagesView(DateFormat dateFormat) {
+  Widget _buildPagesView(DateFormat dateFormat, ThemeData theme, ColorScheme colorScheme, bool isDark) {
     if (_doc.pages == null || _doc.pages!.isEmpty) {
       return const Center(child: Text('Tidak ada halaman dalam dokumen ini'));
     }
@@ -318,23 +355,23 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
         // Meta info bar
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          color: const Color(0xFFF1F5F9),
+          color: colorScheme.surfaceContainerHighest,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 children: [
-                  const Icon(Icons.folder_open_rounded, size: 16, color: Color(0xFF2563EB)),
+                  Icon(Icons.folder_open_rounded, size: 16, color: colorScheme.primary),
                   const SizedBox(width: 6),
                   Text(
                     _doc.folderName,
-                    style: const TextStyle(fontWeight: FontWeight.w600, color: Color(0xFF1E293B), fontSize: 13),
+                    style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurface, fontSize: 13),
                   ),
                 ],
               ),
               Text(
                 dateFormat.format(_doc.createdAt),
-                style: const TextStyle(color: Color(0xFF64748B), fontSize: 12),
+                style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
               ),
             ],
           ),
@@ -358,7 +395,7 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
                       decoration: BoxDecoration(
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.08),
+                            color: Colors.black.withOpacity(isDark ? 0.2 : 0.08),
                             blurRadius: 16,
                             offset: const Offset(0, 6),
                           ),
@@ -381,14 +418,14 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
           padding: const EdgeInsets.only(bottom: 12),
           child: Text(
             'Halaman ${_selectedPageIndex + 1} dari ${_doc.pages!.length}',
-            style: const TextStyle(fontWeight: FontWeight.w600, color: Color(0xFF64748B), fontSize: 13),
+            style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant, fontSize: 13),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildOcrView() {
+  Widget _buildOcrView(ThemeData theme, ColorScheme colorScheme, bool isDark) {
     final hasText = _doc.extractedText != null && _doc.extractedText!.trim().isNotEmpty;
 
     return Padding(
@@ -399,15 +436,15 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Teks Hasil Ekstraksi (OCR)',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF1E293B)),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: colorScheme.onSurface),
               ),
               if (hasText)
                 ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFEFF6FF),
-                    foregroundColor: const Color(0xFF2563EB),
+                    backgroundColor: isDark ? const Color(0xFF1E3A5F) : const Color(0xFFEFF6FF),
+                    foregroundColor: colorScheme.primary,
                     elevation: 0,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   ),
@@ -422,9 +459,9 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: colorScheme.surface,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: const Color(0xFFE2E8F0)),
+                border: Border.all(color: theme.dividerColor),
               ),
               child: SingleChildScrollView(
                 child: SelectableText(
@@ -434,7 +471,7 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
                   style: TextStyle(
                     fontSize: 15,
                     height: 1.5,
-                    color: hasText ? const Color(0xFF1E293B) : const Color(0xFF94A3B8),
+                    color: hasText ? colorScheme.onSurface : colorScheme.onSurfaceVariant,
                   ),
                 ),
               ),

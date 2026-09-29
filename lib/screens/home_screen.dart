@@ -11,6 +11,7 @@ import '../services/pdf_service.dart';
 import 'document_detail_screen.dart';
 import 'convert_screen.dart';
 import 'sign_document_screen.dart';
+import '../main.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -156,6 +157,10 @@ class _HomeScreenState extends State<HomeScreen> {
     final titleController = TextEditingController(text: defaultName);
     String selectedFolder = _selectedFolder == 'Semua' ? 'Uncategorized' : _selectedFolder;
 
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     return showDialog<Map<String, dynamic>>(
       context: context,
       barrierDismissible: false,
@@ -168,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFEFF6FF),
+                    color: isDark ? const Color(0xFF1E3A5F) : const Color(0xFFEFF6FF),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Icon(Icons.check_circle_outline, color: Color(0xFF2563EB)),
@@ -179,7 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text('Simpan Dokumen', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
-                      Text('$pageCount halaman berhasil dipindai', style: const TextStyle(fontSize: 12, color: Color(0xFF64748B))),
+                      Text('$pageCount halaman berhasil dipindai', style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant)),
                     ],
                   ),
                 ),
@@ -190,27 +195,27 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Nama Dokumen', style: TextStyle(fontWeight: FontWeight.w600, color: Color(0xFF334155), fontSize: 13)),
+                  Text('Nama Dokumen', style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurface, fontSize: 13)),
                   const SizedBox(height: 6),
                   TextField(
                     controller: titleController,
                     decoration: InputDecoration(
                       hintText: 'Nama file dokumen',
                       filled: true,
-                      fillColor: const Color(0xFFF8FAFC),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFFCBD5E1))),
+                      fillColor: colorScheme.surfaceContainerHighest,
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: theme.dividerColor)),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                     ),
                   ),
                   const SizedBox(height: 14),
-                  const Text('Pilih Folder', style: TextStyle(fontWeight: FontWeight.w600, color: Color(0xFF334155), fontSize: 13)),
+                  Text('Pilih Folder', style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurface, fontSize: 13)),
                   const SizedBox(height: 6),
                   DropdownButtonFormField<String>(
                     value: selectedFolder,
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: const Color(0xFFF8FAFC),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFFCBD5E1))),
+                      fillColor: colorScheme.surfaceContainerHighest,
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: theme.dividerColor)),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                     ),
                     items: [
@@ -228,7 +233,7 @@ class _HomeScreenState extends State<HomeScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Batal', style: TextStyle(color: Color(0xFF64748B))),
+                child: Text('Batal', style: TextStyle(color: colorScheme.onSurfaceVariant)),
               ),
               OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
@@ -270,6 +275,9 @@ class _HomeScreenState extends State<HomeScreen> {
   // --- Folder Management ---
   Future<void> _showCreateFolderDialog() async {
     final controller = TextEditingController();
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     final name = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
@@ -281,12 +289,12 @@ class _HomeScreenState extends State<HomeScreen> {
           decoration: InputDecoration(
             hintText: 'Nama Folder (misal: Tagihan)',
             filled: true,
-            fillColor: const Color(0xFFF8FAFC),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFFCBD5E1))),
+            fillColor: colorScheme.surfaceContainerHighest,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: theme.dividerColor)),
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Batal', style: TextStyle(color: Color(0xFF64748B)))),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text('Batal', style: TextStyle(color: colorScheme.onSurfaceVariant))),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF2563EB),
@@ -310,6 +318,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _showFolderOptions(FolderModel folder) async {
+    final theme = Theme.of(context);
+    
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
@@ -321,7 +331,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Text(
                 'Folder: ${folder.name}',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Color(0xFF1E293B)),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: theme.colorScheme.onSurface),
               ),
               const Divider(height: 24),
               ListTile(
@@ -349,6 +359,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _renameFolderDialog(FolderModel folder) async {
     final controller = TextEditingController(text: folder.name);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     final newName = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
@@ -360,12 +373,12 @@ class _HomeScreenState extends State<HomeScreen> {
           decoration: InputDecoration(
             hintText: 'Nama baru folder',
             filled: true,
-            fillColor: const Color(0xFFF8FAFC),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            fillColor: colorScheme.surfaceContainerHighest,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: theme.dividerColor)),
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Batal', style: TextStyle(color: Color(0xFF64748B)))),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text('Batal', style: TextStyle(color: colorScheme.onSurfaceVariant))),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF2563EB),
@@ -422,6 +435,9 @@ class _HomeScreenState extends State<HomeScreen> {
   // --- Document Item Actions ---
   Future<void> _renameDocument(DocumentModel doc) async {
     final controller = TextEditingController(text: doc.title);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     final newTitle = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
@@ -433,12 +449,12 @@ class _HomeScreenState extends State<HomeScreen> {
           decoration: InputDecoration(
             hintText: 'Nama baru dokumen',
             filled: true,
-            fillColor: const Color(0xFFF8FAFC),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            fillColor: colorScheme.surfaceContainerHighest,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: theme.dividerColor)),
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Batal', style: TextStyle(color: Color(0xFF64748B)))),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text('Batal', style: TextStyle(color: colorScheme.onSurfaceVariant))),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF2563EB),
@@ -516,10 +532,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor: Colors.white,
         elevation: 0,
         titleSpacing: 16,
         title: Row(
@@ -537,7 +555,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: const Icon(Icons.document_scanner_rounded, color: Colors.white, size: 20),
             ),
             const SizedBox(width: 10),
-            const Column(
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -545,28 +563,72 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: TextStyle(
                     fontWeight: FontWeight.w800,
                     fontSize: 20,
-                    color: Color(0xFF0F172A),
+                    color: colorScheme.onSurface,
                     letterSpacing: -0.5,
                   ),
                 ),
                 Text(
                   'Smart Scanner & Convert',
-                  style: TextStyle(fontSize: 11, color: Color(0xFF64748B)),
+                  style: TextStyle(fontSize: 11, color: colorScheme.onSurfaceVariant),
                 ),
               ],
             ),
           ],
         ),
         actions: [
+          PopupMenuButton<ThemeMode>(
+            icon: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: isDark 
+                    ? const Color(0xFF334155) 
+                    : const Color(0xFFEFF6FF),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                Icons.brightness_6_rounded, 
+                color: isDark 
+                    ? const Color(0xFF38BDF8) 
+                    : const Color(0xFF2563EB), 
+                size: 20
+              ),
+            ),
+            tooltip: 'Pilih Tema',
+            onSelected: (ThemeMode mode) {
+              themeNotifier.value = mode;
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<ThemeMode>>[
+              const PopupMenuItem<ThemeMode>(
+                value: ThemeMode.system,
+                child: Text('Otomatis'),
+              ),
+              const PopupMenuItem<ThemeMode>(
+                value: ThemeMode.light,
+                child: Text('Terang'),
+              ),
+              const PopupMenuItem<ThemeMode>(
+                value: ThemeMode.dark,
+                child: Text('Gelap'),
+              ),
+            ],
+          ),
           IconButton(
             tooltip: 'Convert Hub',
             icon: Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: const Color(0xFFEFF6FF),
+                color: isDark 
+                    ? const Color(0xFF334155) 
+                    : const Color(0xFFEFF6FF),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(Icons.transform_rounded, color: Color(0xFF2563EB), size: 20),
+              child: Icon(
+                Icons.transform_rounded, 
+                color: isDark 
+                    ? const Color(0xFF38BDF8) 
+                    : const Color(0xFF2563EB), 
+                size: 20
+              ),
             ),
             onPressed: () async {
               final res = await Navigator.push(
@@ -586,17 +648,17 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             // Search Bar
             Container(
-              color: Colors.white,
+              color: colorScheme.surface,
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
               child: TextField(
                 controller: _searchController,
                 onChanged: _searchDocuments,
                 decoration: InputDecoration(
                   hintText: 'Cari judul, teks OCR, atau folder...',
-                  hintStyle: const TextStyle(fontSize: 14, color: Color(0xFF94A3B8)),
+                  hintStyle: TextStyle(fontSize: 14, color: colorScheme.onSurfaceVariant),
                   filled: true,
-                  fillColor: const Color(0xFFF1F5F9),
-                  prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF64748B), size: 20),
+                  fillColor: colorScheme.surfaceContainerHighest,
+                  prefixIcon: Icon(Icons.search_rounded, color: colorScheme.onSurfaceVariant, size: 20),
                   suffixIcon: _searchController.text.isNotEmpty
                       ? IconButton(
                           icon: const Icon(Icons.clear_rounded, size: 18),
@@ -618,7 +680,7 @@ class _HomeScreenState extends State<HomeScreen> {
             // Folders Horizontal Filter Bar
             Container(
               height: 48,
-              color: Colors.white,
+              color: colorScheme.surface,
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -628,7 +690,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
                     child: ActionChip(
-                      backgroundColor: const Color(0xFFF1F5F9),
+                      backgroundColor: colorScheme.surfaceContainerHighest,
                       side: BorderSide.none,
                       avatar: const Icon(Icons.add, size: 16, color: Color(0xFF2563EB)),
                       label: const Text('+ Folder', style: TextStyle(color: Color(0xFF2563EB), fontSize: 12, fontWeight: FontWeight.bold)),
@@ -639,7 +701,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
 
-            const Divider(height: 1, color: Color(0xFFE2E8F0)),
+            Divider(height: 1, color: theme.dividerColor),
 
             // Documents Content
             Expanded(
@@ -664,6 +726,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildFolderChip(String name, {bool isSpecial = false, FolderModel? folderModel}) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final isSelected = _selectedFolder == name;
 
     return Padding(
@@ -677,7 +741,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Text(name, style: TextStyle(
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                 fontSize: 12,
-                color: isSelected ? Colors.white : const Color(0xFF475569),
+                color: isSelected ? Colors.white : colorScheme.onSurfaceVariant,
               )),
               if (folderModel != null && isSelected) ...[
                 const SizedBox(width: 4),
@@ -690,7 +754,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           selected: isSelected,
           selectedColor: const Color(0xFF2563EB),
-          backgroundColor: const Color(0xFFF1F5F9),
+          backgroundColor: colorScheme.surfaceContainerHighest,
           side: BorderSide.none,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           onSelected: (selected) {
@@ -705,6 +769,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildEmptyState() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return Center(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(32),
@@ -714,7 +781,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: const Color(0xFFEFF6FF),
+                color: isDark ? const Color(0xFF1E3A5F) : const Color(0xFFEFF6FF),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -724,15 +791,15 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            const Text(
+            Text(
               'Belum ada dokumen',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFF1E293B)),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: theme.colorScheme.onSurface),
             ),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'Tekan tombol Smart Scan untuk memindai berkas atau gunakan fitur Convert Hub.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Color(0xFF64748B), fontSize: 14),
+              style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 14),
             ),
           ],
         ),
@@ -742,6 +809,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildDocumentGrid() {
     final dateFormat = DateFormat('dd MMM yyyy, HH:mm');
+    final theme = Theme.of(context);
 
     return GridView.builder(
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 80),
@@ -767,9 +835,9 @@ class _HomeScreenState extends State<HomeScreen> {
           },
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
+              border: Border.all(color: theme.dividerColor),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.03),
@@ -793,7 +861,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               fit: BoxFit.cover,
                             )
                           : Container(
-                              color: const Color(0xFFF1F5F9),
+                              color: theme.colorScheme.surfaceContainerHighest,
                               child: const Icon(Icons.image_not_supported_rounded, color: Colors.grey),
                             ),
                       
@@ -822,10 +890,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           icon: Container(
                             padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.9),
+                              color: theme.colorScheme.surface.withOpacity(0.9),
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(Icons.more_vert, size: 16, color: Color(0xFF1E293B)),
+                            child: Icon(Icons.more_vert, size: 16, color: theme.colorScheme.onSurface),
                           ),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                           onSelected: (value) {
@@ -881,10 +949,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         doc.title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 13,
-                          color: Color(0xFF0F172A),
+                          color: theme.colorScheme.onSurface,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -897,7 +965,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               doc.folderName,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(fontSize: 11, color: Color(0xFF64748B), fontWeight: FontWeight.w500),
+                              style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant, fontWeight: FontWeight.w500),
                             ),
                           ),
                         ],
@@ -905,7 +973,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(height: 2),
                       Text(
                         dateFormat.format(doc.createdAt),
-                        style: const TextStyle(fontSize: 10, color: Color(0xFF94A3B8)),
+                        style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurfaceVariant),
                       ),
                     ],
                   ),

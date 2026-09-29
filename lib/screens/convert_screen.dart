@@ -219,18 +219,21 @@ class _ConvertScreenState extends State<ConvertScreen> with SingleTickerProvider
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Convert Hub', style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
-        backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF0F172A),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
         elevation: 0,
         bottom: TabBar(
           controller: _tabController,
           labelColor: const Color(0xFF2563EB),
-          unselectedLabelColor: const Color(0xFF64748B),
+          unselectedLabelColor: colorScheme.onSurfaceVariant,
           indicatorColor: const Color(0xFF2563EB),
           indicatorWeight: 3,
           tabs: const [
@@ -248,7 +251,7 @@ class _ConvertScreenState extends State<ConvertScreen> with SingleTickerProvider
                   const SizedBox(height: 16),
                   Text(
                     _loadingMessage,
-                    style: const TextStyle(fontWeight: FontWeight.w600, color: Color(0xFF475569)),
+                    style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant),
                   ),
                 ],
               ),
@@ -256,14 +259,18 @@ class _ConvertScreenState extends State<ConvertScreen> with SingleTickerProvider
           : TabBarView(
               controller: _tabController,
               children: [
-                _buildImageToPdfTab(),
-                _buildPdfToImageTab(),
+                _buildImageToPdfTab(context),
+                _buildPdfToImageTab(context),
               ],
             ),
     );
   }
 
-  Widget _buildImageToPdfTab() {
+  Widget _buildImageToPdfTab(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -274,9 +281,9 @@ class _ConvertScreenState extends State<ConvertScreen> with SingleTickerProvider
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: colorScheme.surface,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
+              border: Border.all(color: theme.dividerColor),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.02),
@@ -290,20 +297,20 @@ class _ConvertScreenState extends State<ConvertScreen> with SingleTickerProvider
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFEFF6FF),
+                    color: isDark ? const Color(0xFF1E3A5F) : const Color(0xFFEFF6FF),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(Icons.add_photo_alternate_rounded, size: 36, color: Color(0xFF2563EB)),
                 ),
                 const SizedBox(height: 12),
-                const Text(
+                Text(
                   'Pilih Gambar dari Galeri',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF1E293B)),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: colorScheme.onSurface),
                 ),
                 const SizedBox(height: 4),
-                const Text(
+                Text(
                   'Bisa pilih 1 atau banyak foto sekaligus',
-                  style: TextStyle(color: Color(0xFF64748B), fontSize: 13),
+                  style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 13),
                 ),
               ],
             ),
@@ -317,16 +324,16 @@ class _ConvertScreenState extends State<ConvertScreen> with SingleTickerProvider
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: colorScheme.surface,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
+              border: Border.all(color: theme.dividerColor),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Nama Dokumen PDF',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF334155)),
+                  style: TextStyle(fontWeight: FontWeight.bold, color: colorScheme.onSurface),
                 ),
                 const SizedBox(height: 8),
                 TextField(
@@ -334,28 +341,28 @@ class _ConvertScreenState extends State<ConvertScreen> with SingleTickerProvider
                   decoration: InputDecoration(
                     hintText: 'Masukkan nama file PDF',
                     filled: true,
-                    fillColor: const Color(0xFFF8FAFC),
+                    fillColor: colorScheme.surfaceContainerHighest,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Color(0xFFCBD5E1)),
+                      borderSide: BorderSide(color: theme.dividerColor),
                     ),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   ),
                 ),
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   'Pilih Folder / Kategori',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF334155)),
+                  style: TextStyle(fontWeight: FontWeight.bold, color: colorScheme.onSurface),
                 ),
                 const SizedBox(height: 8),
                 DropdownButtonFormField<String>(
                   value: _imgToPdfFolder,
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: const Color(0xFFF8FAFC),
+                    fillColor: colorScheme.surfaceContainerHighest,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Color(0xFFCBD5E1)),
+                      borderSide: BorderSide(color: theme.dividerColor),
                     ),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   ),
@@ -379,7 +386,7 @@ class _ConvertScreenState extends State<ConvertScreen> with SingleTickerProvider
             children: [
               Text(
                 'Gambar Terpilih (${_selectedImages.length})',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF1E293B)),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: colorScheme.onSurface),
               ),
               TextButton.icon(
                 onPressed: () => setState(() => _selectedImages.clear()),
@@ -404,7 +411,7 @@ class _ConvertScreenState extends State<ConvertScreen> with SingleTickerProvider
                       width: 100,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: const Color(0xFFE2E8F0)),
+                        border: Border.all(color: theme.dividerColor),
                         image: DecorationImage(
                           image: FileImage(File(_selectedImages[index].path)),
                           fit: BoxFit.cover,
@@ -490,7 +497,11 @@ class _ConvertScreenState extends State<ConvertScreen> with SingleTickerProvider
     );
   }
 
-  Widget _buildPdfToImageTab() {
+  Widget _buildPdfToImageTab(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -501,9 +512,9 @@ class _ConvertScreenState extends State<ConvertScreen> with SingleTickerProvider
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: colorScheme.surface,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
+              border: Border.all(color: theme.dividerColor),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.02),
@@ -516,8 +527,8 @@ class _ConvertScreenState extends State<ConvertScreen> with SingleTickerProvider
               children: [
                 Container(
                   padding: const EdgeInsets.all(16),
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFFEF2F2),
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF3B1515) : const Color(0xFFFEF2F2),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(Icons.picture_as_pdf_rounded, size: 36, color: Color(0xFFEF4444)),
@@ -528,14 +539,14 @@ class _ConvertScreenState extends State<ConvertScreen> with SingleTickerProvider
                       ? 'PDF Terpilih: ${_selectedPdfFile!.path.split(Platform.pathSeparator).last}'
                       : 'Pilih Dokumen PDF',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF1E293B)),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: colorScheme.onSurface),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   _selectedPdfFile != null
                       ? 'Ketuk untuk mengganti file PDF'
                       : 'Ekstrak tiap halaman menjadi foto gambar JPG',
-                  style: const TextStyle(color: Color(0xFF64748B), fontSize: 13),
+                  style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 13),
                 ),
               ],
             ),
@@ -548,16 +559,16 @@ class _ConvertScreenState extends State<ConvertScreen> with SingleTickerProvider
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: colorScheme.surface,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
+              border: Border.all(color: theme.dividerColor),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Nama Dokumen Hasil Ekstraksi',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF334155)),
+                  style: TextStyle(fontWeight: FontWeight.bold, color: colorScheme.onSurface),
                 ),
                 const SizedBox(height: 8),
                 TextField(
@@ -565,28 +576,28 @@ class _ConvertScreenState extends State<ConvertScreen> with SingleTickerProvider
                   decoration: InputDecoration(
                     hintText: 'Nama dokumen',
                     filled: true,
-                    fillColor: const Color(0xFFF8FAFC),
+                    fillColor: colorScheme.surfaceContainerHighest,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Color(0xFFCBD5E1)),
+                      borderSide: BorderSide(color: theme.dividerColor),
                     ),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   ),
                 ),
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   'Pilih Folder / Kategori',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF334155)),
+                  style: TextStyle(fontWeight: FontWeight.bold, color: colorScheme.onSurface),
                 ),
                 const SizedBox(height: 8),
                 DropdownButtonFormField<String>(
                   value: _pdfToImgFolder,
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: const Color(0xFFF8FAFC),
+                    fillColor: colorScheme.surfaceContainerHighest,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Color(0xFFCBD5E1)),
+                      borderSide: BorderSide(color: theme.dividerColor),
                     ),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   ),

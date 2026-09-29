@@ -17,17 +17,23 @@ class SignDocumentScreen extends StatefulWidget {
 class _SignDocumentScreenState extends State<SignDocumentScreen> {
   final GlobalKey _boundaryKey = GlobalKey();
   Uint8List? _signatureBytes;
-  Offset _signatureOffset = const Offset(100, 200);
+  final ValueNotifier<Offset> _signatureOffsetNotifier = ValueNotifier(const Offset(100, 200));
   double _signatureScale = 1.0;
   bool _isProcessing = false;
+  bool _isCapturing = false;
 
   @override
   void initState() {
     super.initState();
-    // Open signature pad automatically if no signature yet
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _openSignaturePad();
     });
+  }
+
+  @override
+  void dispose() {
+    _signatureOffsetNotifier.dispose();
+    super.dispose();
   }
 
   Future<void> _openSignaturePad() async {
@@ -50,10 +56,15 @@ class _SignDocumentScreenState extends State<SignDocumentScreen> {
       return;
     }
 
-    setState(() => _isProcessing = true);
+    setState(() {
+      _isProcessing = true;
+      _isCapturing = true;
+    });
+
+    // Allow UI to rebuild and hide the blue selection border before capturing
+    await Future.delayed(const Duration(milliseconds: 100));
 
     try {
-      // Capture the RepaintBoundary as an image
       RenderRepaintBoundary boundary =
           _boundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
       ui.Image image = await boundary.toImage(pixelRatio: 2.0);
@@ -62,7 +73,6 @@ class _SignDocumentScreenState extends State<SignDocumentScreen> {
       if (byteData != null) {
         Uint8List pngBytes = byteData.buffer.asUint8List();
         
-        // Overwrite the existing image or write to a new file
         final originalFile = File(widget.imagePath);
         await originalFile.writeAsBytes(pngBytes);
         
@@ -78,7 +88,10 @@ class _SignDocumentScreenState extends State<SignDocumentScreen> {
       }
     } finally {
       if (mounted) {
-        setState(() => _isProcessing = false);
+        setState(() {
+          _isProcessing = false;
+          _isCapturing = false;
+        });
       }
     }
   }
@@ -105,11 +118,10 @@ class _SignDocumentScreenState extends State<SignDocumentScreen> {
           ),
         ],
       ),
-      body: _isProcessing
+      body: _isProcessing && !_isCapturing
           ? const Center(child: CircularProgressIndicator(color: Colors.white))
           : Column(
               children: [
-                // Info banner
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   color: const Color(0xFF1E293B),
@@ -136,7 +148,6 @@ class _SignDocumentScreenState extends State<SignDocumentScreen> {
                           child: Stack(
                             alignment: Alignment.topLeft,
                             children: [
-                              // Document image
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(8),
                                 child: Image.file(
@@ -144,40 +155,46 @@ class _SignDocumentScreenState extends State<SignDocumentScreen> {
                                   fit: BoxFit.contain,
                                 ),
                               ),
-                              // Signature overlay
                               if (_signatureBytes != null)
-                                Positioned(
-                                  left: _signatureOffset.dx,
-                                  top: _signatureOffset.dy,
-                                  child: GestureDetector(
-                                    onPanUpdate: (details) {
-                                      setState(() {
-                                        _signatureOffset = Offset(
-                                          _signatureOffset.dx + details.delta.dx,
-                                          _signatureOffset.dy + details.delta.dy,
-                                        );
-                                      });
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          color: const Color(0xFF2563EB).withOpacity(0.8),
-                                          width: 1.5,
+                                ValueListenableBuilder<Offset>(
+                                  valueListenable: _signatureOffsetNotifier,
+                                  builder: (context, offset, child) {
+                                    return Positioned(
+                                      left: offset.dx,
+                                      top: offset.dy,
+                                      child: GestureDetector(
+                                        onPanUpdate: (details) {
+                                          _signatureOffsetNotifier.value = Offset(
+                                            _signatureOffsetNotifier.value.dx + details.delta.dx,
+                                            _signatureOffsetNotifier.value.dy + details.delta.dy,
+                                          );
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            border: _isCapturing
+                                                ? null
+                                                : Border.all(
+                                                    color: const Color(0xFF2563EB).withOpacity(0.8),
+                                                    width: 1.5,
+                                                  ),
+                                            borderRadius: BorderRadius.circular(4),
+                                            color: _isCapturing
+                                                ? Colors.transparent
+                                                : Colors.white.withOpacity(0.1),
+                                          ),
+                                          child: Transform.scale(
+                                            scale: _signatureScale,
+                                            child: Image.memory(
+                                              _signatureBytes!,
+                                              width: 130,
+                                              height: 70,
+                                              fit: BoxFit.contain,
+                                            ),
+                                          ),
                                         ),
-                                        borderRadius: BorderRadius.circular(4),
-                                        color: Colors.white.withOpacity(0.1),
                                       ),
-                                      child: Transform.scale(
-                                        scale: _signatureScale,
-                                        child: Image.memory(
-                                          _signatureBytes!,
-                                          width: 130,
-                                          height: 70,
-                                          fit: BoxFit.contain,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                                    );
+                                  },
                                 ),
                             ],
                           ),
@@ -186,8 +203,7 @@ class _SignDocumentScreenState extends State<SignDocumentScreen> {
                     ),
                   ),
                 ),
-                // Bottom control panel for resizing
-                if (_signatureBytes != null)
+                if (_signatureBytes != null && !_isCapturing)
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                     color: const Color(0xFF1E293B),
